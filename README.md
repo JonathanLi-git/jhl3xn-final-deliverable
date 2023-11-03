@@ -14,5 +14,5 @@ How to demo:
 5. Once in, the big sign out button will end your session and redirect you back to the login page.
 
 
-
+*Disclaimer: it's a little laggy 
 DEMO URL: https://ec-milestone.vercel.app/
