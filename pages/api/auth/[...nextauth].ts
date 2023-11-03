@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         console.log(credentials)
-        const response = await fetch("http://localhost:3000/api/login", {
+        const response = await fetch("https://ec-milestone-jx2vziq5u-jonathans-projects-6eafbe1e.vercel.app/api/login", {
           method: "POST",
           body: JSON.stringify({
             params: [credentials?.username, credentials?.password],
