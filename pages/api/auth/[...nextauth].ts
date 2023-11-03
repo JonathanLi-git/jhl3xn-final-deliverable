@@ -5,7 +5,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/login'
   },
-  secret: process.env.AUTH_SECRETy,
+  secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         console.log(credentials)
-        const response = await fetch("https://ec-milestone-jx2vziq5u-jonathans-projects-6eafbe1e.vercel.app/api/login", {
+        const response = await fetch("https://ec-milestone.vercel.app/api/login", {
           method: "POST",
           body: JSON.stringify({
             params: [credentials?.username, credentials?.password],

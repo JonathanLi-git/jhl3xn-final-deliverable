@@ -21,7 +21,7 @@ export const UserPage = ({ params }: pageProps) => {
       <button
         className="w-72 h-12 transition duration-150 ease-out hover:scale-105 bg-purple-600 text-white text-xl font-semibold"
         onClick={() => {
-          signOut({ callbackUrl: 'https://ec-milestone-jx2vziq5u-jonathans-projects-6eafbe1e.vercel.app/login'});
+          signOut({ callbackUrl: 'https://ec-milestone.vercel.app/login'});
         }}>
         Sign Out
       </button>
