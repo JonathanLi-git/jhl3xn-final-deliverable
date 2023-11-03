@@ -12,3 +12,7 @@ How to demo:
 3. Log in with the username and password you created.
 4. It should redirect you to another page once a session is established. You can view the status of the sessions in the console.
 5. Once in, the big sign out button will end your session and redirect you back to the login page.
+
+
+
+DEMO URL: https://ec-milestone.vercel.app/
