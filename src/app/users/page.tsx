@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 
-
-export default function Home({ Component, pageProps }: AppProps) {
+export default function User({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   return (
-    <div>adsf</div>
+    <SessionProvider session={pageProps.session}>
+        <Component {...pageProps} />
+    </SessionProvider>
   );
 }

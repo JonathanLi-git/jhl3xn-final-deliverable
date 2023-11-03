@@ -5,7 +5,7 @@ import mysql from 'mysql2/promise';
  * 
  * @returns - Data of the database
  */
-export async function query ({query, values=[]}) {
+export async function query ({query, values}) {
 
     const connection = await mysql.createConnection({
         host: 'mysql01.cs.virginia.edu',
