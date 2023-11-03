@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation'
-import React, { FormEventHandler, useState } from "react";
+import React, { useState } from "react";
 import { signIn } from 'next-auth/react'
 
 export default function Login() {
