@@ -2,24 +2,23 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "../../components/navbar";
-import { rowObj, markComplete, getUser, getTasks } from "./helper";
+import { Navbar } from "../../../components/navbar";
+import { getHOS, getUser, rowObj } from "./helper";
+
 export interface pageProps {
   params: { personID: string };
 }
 
-export const UserPage = ({ params }: pageProps) => {
+export const OverduePage = ({ params }: pageProps) => {
   const router = useRouter();
   const session = useSession();
   const [personInfo, setPersonInfo] = useState<any>(undefined);
   const [taskInfo, setTaskInfo] = useState<any>(undefined);
-  const [deleted, setDeleted] = useState<boolean>(false)
 
-  console.log(session.data?.user.name, params.personID)
   if (session.status === "unauthenticated" || session.data?.user.name+"" !== params.personID) {
     router.push("/login");
   }
-  console.log("session,", session);
+
   const getRows = (list: Array<rowObj>, { params }: pageProps) => {
     const rows = [] as Array<JSX.Element>;
 
@@ -27,21 +26,9 @@ export const UserPage = ({ params }: pageProps) => {
       rows.push(
         <tr className="bg-zinc-100 text-black border-b">
           <th scope="row" className="px-6 py-4">
-            {row.taskName}
+            {row.first_name + " " + row.last_name}
           </th>
-          <td className="px-6 py-4">{row.description}</td>
-          <td className="px-6 py-4">{row.dueDate}</td>
-          <td className="px-6 py-4">
-            <button
-              className="bg-purple-500 px-2 py-2 transition duration-150 ease-out hover:scale-105 text-zinc-100"
-              onClick={() => {
-                // Write deletion SQL for onclicks.
-                markComplete(row.taskId, params.personID);
-                setDeleted(!deleted)
-              }}>
-              Mark Done
-            </button>
-          </td>
+          <td className="px-6 py-4">{row.details}</td>
         </tr>
       );
     });
@@ -51,44 +38,55 @@ export const UserPage = ({ params }: pageProps) => {
 
   useEffect(() => {
     getUser({ params }).then((data) => setPersonInfo(data));
-    getTasks({ params }).then((data) => setTaskInfo(data));
-  }, [deleted]);
+    getHOS().then((data) => setTaskInfo(data));
+  }, []);
 
   let rowParams = [] as Array<rowObj>;
   if (taskInfo !== undefined) {
     taskInfo.forEach(
-      (task: { name: any; description: any; due_date: any; task_ID: any }) => {
+      (task: { first_name: any; last_name: any; details: any }) => {
         rowParams.push({
-          taskName: task.name,
-          description: task.description,
-          dueDate: task.due_date,
-          taskId: task.task_ID,
-        })
+          first_name: task.first_name,
+          last_name: task.last_name,
+          details: task.details,
+        });
       }
     );
   }
   const rows = getRows(rowParams, { params });
+
   return personInfo ? (
     <div className="bg-zinc-100 h-screen">
-      <Navbar username={personInfo.username as string} personId={params.personID as string} />
+      <Navbar
+        username={personInfo.username as string}
+        personId={params.personID as string}
+      />
+      <div className="mx-36 rounded justify-center mt-12 h-12 w-2/3 text-white relative ">
+        <div className="h-12 w-48 right-0 rounded">
+          <button
+            className="h-12 w-48 bg-purple-500 transition duration-150 ease-out hover:scale-105 absolute right-0 rounded"
+            onClick={() => {
+              router.push(`/users/${params.personID}/hallofshame/createHOS`);
+            }}>
+            Add to Hall of Shame
+          </button>
+        </div>
+      </div>
+      <div className="mt-12 h-12 w-full text-3xl text-gray-700 text-center">
+        <p>Hall of Shame</p>
+      </div>
       <div className="flex justify-center w-screen h-fit ">
-        <div className="my-20 mx-20 bg-black h-1/4 w-3/5">
+        <div className="my-12 mx-20 bg-black h-1/4 w-3/5">
           <div>
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-black uppercase bg-zinc-200">
                   <tr>
                     <th scope="col" className="px-6 py-3">
-                      Task Name
+                      Person
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Description
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Due Date
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Mark Complete
+                      Details
                     </th>
                   </tr>
                 </thead>
@@ -125,4 +123,4 @@ export const UserPage = ({ params }: pageProps) => {
   );
 };
 
-export default UserPage;
+export default OverduePage;

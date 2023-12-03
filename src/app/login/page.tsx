@@ -1,11 +1,13 @@
 'use client';
 import { useRouter } from 'next/navigation'
 import React, { useState } from "react";
+import { useSession } from "next-auth/react";
 import { signIn } from 'next-auth/react'
 
 export default function Login() {
   const router = useRouter()
   const [loginUsername, setLoginUsername] = useState<string | undefined>("");
+  const session = useSession();
   const [loginPassword, setLoginPassword] = useState<string | undefined>("");
   const [createUsername, setCreateUsername] = useState<string | undefined>("");
   const [createPassword, setCreatePassword] = useState<string | undefined>("");
@@ -27,21 +29,8 @@ export default function Login() {
     })
 
     if(res?.status == 200) {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify({
-          params: [
-            loginUsername,
-            loginPassword
-          ],
-          method: "login",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      router.push(`/users/${data.data[0][0].person_ID}`)
+      const personId = session.data?.user.name 
+      router.push(`/users/${personId}`)
     }
   }
 

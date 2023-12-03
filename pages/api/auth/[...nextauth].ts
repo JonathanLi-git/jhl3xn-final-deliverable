@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         console.log(credentials)
-        const response = await fetch("https://ec-milestone.vercel.app/api/login", {
+        const response = await fetch("http://localhost:3000/api/login", {
           method: "POST",
           body: JSON.stringify({
             params: [credentials?.username, credentials?.password],
@@ -28,11 +28,16 @@ export const authOptions: NextAuthOptions = {
         });
 
         const data = await response.json();
-        console.log(data)
-        if (data.data[0].length > 0) {
-          return data.data[0];
+        if(data.data[0].length === 0)
+          return null
+        const user = {
+          _id: data.data[0][0].personId,
+          name: data.data[0][0].personId,
+          email: data.data[0][0].personId
         }
-        return null;
+        return user
+        console.log(data.data[0][0])
+        return data.data[0][0];
       },
     }),
   ],

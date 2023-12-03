@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "../../components/navbar";
-import { rowObj, markComplete, getUser, getTasks } from "./helper";
+import { Navbar } from "../../../components/navbar";
+import { rowObj, vote, getUser, getVotingTasks } from "./helper";
+
 export interface pageProps {
   params: { personID: string };
 }
@@ -13,13 +14,13 @@ export const UserPage = ({ params }: pageProps) => {
   const session = useSession();
   const [personInfo, setPersonInfo] = useState<any>(undefined);
   const [taskInfo, setTaskInfo] = useState<any>(undefined);
-  const [deleted, setDeleted] = useState<boolean>(false)
+  const [updateVote, setUpdateVote] = useState<boolean>(false);
+  const [sort, setSort] = useState<boolean>(false);
 
-  console.log(session.data?.user.name, params.personID)
   if (session.status === "unauthenticated" || session.data?.user.name+"" !== params.personID) {
     router.push("/login");
   }
-  console.log("session,", session);
+
   const getRows = (list: Array<rowObj>, { params }: pageProps) => {
     const rows = [] as Array<JSX.Element>;
 
@@ -30,16 +31,18 @@ export const UserPage = ({ params }: pageProps) => {
             {row.taskName}
           </th>
           <td className="px-6 py-4">{row.description}</td>
+          <td className="px-6 py-4">{row.first_name + " " + row.last_name}</td>
           <td className="px-6 py-4">{row.dueDate}</td>
+          <td className="px-6 py-4">{row.total_votes}</td>
           <td className="px-6 py-4">
             <button
-              className="bg-purple-500 px-2 py-2 transition duration-150 ease-out hover:scale-105 text-zinc-100"
+              className="bg-green-600 mr-5 px-2 py-2 transition duration-150 ease-out hover:scale-105 text-zinc-100"
               onClick={() => {
-                // Write deletion SQL for onclicks.
-                markComplete(row.taskId, params.personID);
-                setDeleted(!deleted)
+                console.log(row.taskId, params.personID, "debil");
+                vote(row.taskId, params.personID);
+                setUpdateVote(!updateVote);
               }}>
-              Mark Done
+              Yes
             </button>
           </td>
         </tr>
@@ -51,27 +54,47 @@ export const UserPage = ({ params }: pageProps) => {
 
   useEffect(() => {
     getUser({ params }).then((data) => setPersonInfo(data));
-    getTasks({ params }).then((data) => setTaskInfo(data));
-  }, [deleted]);
+    getVotingTasks(sort, { params }).then((data) => setTaskInfo(data));
+  }, [updateVote, sort]);
 
   let rowParams = [] as Array<rowObj>;
   if (taskInfo !== undefined) {
     taskInfo.forEach(
-      (task: { name: any; description: any; due_date: any; task_ID: any }) => {
+      (task: {
+        name: any;
+        description: any;
+        first_name: any;
+        last_name: any;
+        due_date: any;
+        total_votes: any;
+        task_ID: any;
+      }) => {
         rowParams.push({
           taskName: task.name,
           description: task.description,
+          first_name: task.first_name,
+          last_name: task.last_name,
           dueDate: task.due_date,
+          total_votes: task.total_votes,
           taskId: task.task_ID,
-        })
+        });
       }
     );
   }
   const rows = getRows(rowParams, { params });
+
   return personInfo ? (
     <div className="bg-zinc-100 h-screen">
-      <Navbar username={personInfo.username as string} personId={params.personID as string} />
+      <Navbar
+        username={personInfo.username as string}
+        personId={params.personID as string}
+      />
       <div className="flex justify-center w-screen h-fit ">
+        <div className="rounded transition duration-150 ease-out hover:scale-105 bg-purple-500 my-20 h-12 w-24 text-white">
+          <button className="h-12 w-24" onClick={() => {setSort(!sort)}}>
+            Sort By Due Date
+          </button>
+        </div>
         <div className="my-20 mx-20 bg-black h-1/4 w-3/5">
           <div>
             <div className="relative overflow-x-auto">
@@ -85,10 +108,16 @@ export const UserPage = ({ params }: pageProps) => {
                       Description
                     </th>
                     <th scope="col" className="px-6 py-3">
+                      Assignee
+                    </th>
+                    <th scope="col" className="px-6 py-3">
                       Due Date
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Mark Complete
+                      Total Votes
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Vote
                     </th>
                   </tr>
                 </thead>

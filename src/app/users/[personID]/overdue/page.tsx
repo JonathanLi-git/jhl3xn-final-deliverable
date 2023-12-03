@@ -2,24 +2,23 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "../../components/navbar";
-import { rowObj, markComplete, getUser, getTasks } from "./helper";
+import { Navbar } from "../../../components/navbar";
+import { getOverdue, getUser, rowObj } from "./helper";
+
 export interface pageProps {
   params: { personID: string };
 }
 
-export const UserPage = ({ params }: pageProps) => {
+export const OverduePage = ({ params }: pageProps) => {
   const router = useRouter();
   const session = useSession();
   const [personInfo, setPersonInfo] = useState<any>(undefined);
   const [taskInfo, setTaskInfo] = useState<any>(undefined);
-  const [deleted, setDeleted] = useState<boolean>(false)
 
-  console.log(session.data?.user.name, params.personID)
   if (session.status === "unauthenticated" || session.data?.user.name+"" !== params.personID) {
     router.push("/login");
   }
-  console.log("session,", session);
+
   const getRows = (list: Array<rowObj>, { params }: pageProps) => {
     const rows = [] as Array<JSX.Element>;
 
@@ -30,18 +29,8 @@ export const UserPage = ({ params }: pageProps) => {
             {row.taskName}
           </th>
           <td className="px-6 py-4">{row.description}</td>
+          <td className="px-6 py-4">{row.first_name + " " + row.last_name}</td>
           <td className="px-6 py-4">{row.dueDate}</td>
-          <td className="px-6 py-4">
-            <button
-              className="bg-purple-500 px-2 py-2 transition duration-150 ease-out hover:scale-105 text-zinc-100"
-              onClick={() => {
-                // Write deletion SQL for onclicks.
-                markComplete(row.taskId, params.personID);
-                setDeleted(!deleted)
-              }}>
-              Mark Done
-            </button>
-          </td>
         </tr>
       );
     });
@@ -51,16 +40,18 @@ export const UserPage = ({ params }: pageProps) => {
 
   useEffect(() => {
     getUser({ params }).then((data) => setPersonInfo(data));
-    getTasks({ params }).then((data) => setTaskInfo(data));
-  }, [deleted]);
+    getOverdue().then((data) => setTaskInfo(data));
+  }, []);
 
   let rowParams = [] as Array<rowObj>;
   if (taskInfo !== undefined) {
     taskInfo.forEach(
-      (task: { name: any; description: any; due_date: any; task_ID: any }) => {
+      (task: { name: any; description: any; first_name: any; last_name: any; due_date: any; task_ID: any }) => {
         rowParams.push({
           taskName: task.name,
           description: task.description,
+          first_name: task.first_name,
+          last_name: task.last_name,
           dueDate: task.due_date,
           taskId: task.task_ID,
         })
@@ -68,6 +59,7 @@ export const UserPage = ({ params }: pageProps) => {
     );
   }
   const rows = getRows(rowParams, { params });
+
   return personInfo ? (
     <div className="bg-zinc-100 h-screen">
       <Navbar username={personInfo.username as string} personId={params.personID as string} />
@@ -85,11 +77,11 @@ export const UserPage = ({ params }: pageProps) => {
                       Description
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Due Date
+                      Assignee
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Mark Complete
-                    </th>
+                      Due Date
+                    </th>   
                   </tr>
                 </thead>
                 <tbody>{rows}</tbody>
@@ -125,4 +117,4 @@ export const UserPage = ({ params }: pageProps) => {
   );
 };
 
-export default UserPage;
+export default OverduePage;
