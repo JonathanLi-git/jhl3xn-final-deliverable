@@ -27,14 +27,6 @@ export default function Login() {
     const res = await signIn("credentials", {
       username: loginUsername,
       password: loginPassword,
-<<<<<<< HEAD
-      redirect: false,
-    });
-    if (res?.status == 200) {
-      const personId = session.data?.user.name;
-      if (personId !== undefined) {
-        console.log("sdflksjdfm,", personId)
-=======
       redirect: false
     })
 
@@ -42,7 +34,6 @@ export default function Login() {
       const personId = session.data?.user.name;
       if (personId !== undefined) {
         console.log("sldkfjsdlkf", personId);
->>>>>>> 2b1d652fbd0923c7a3b1be1296a680d7089bcf29
         router.push(`/users/${personId}`);
       }
     }
