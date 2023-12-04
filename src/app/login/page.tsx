@@ -28,9 +28,9 @@ export default function Login() {
       redirect: false
     })
 
-    if(res?.status == 200) {
-      const personId = session.data?.user.name 
-      router.push(`/users/${personId}`)
+    if (res?.status == 200) {
+      const personId = session.data?.user.name;
+      if (personId !== undefined) router.push(`/users/${personId}`);
     }
   }
 
