@@ -31,7 +31,7 @@ export const AllPage = ({ params }: pageProps) => {
         username={personInfo.username as string}
         personId={params.personID as string}
       />
-      <div className="flex justify-center w-screen h-screen ">
+      <div className="flex justify-center w-screen h-screen bg-zinc-100">
         <div className=" mt-20 mb-20 block grid grid-rows-7 grid-cols-1 w-1/3 text-zinc-900 ">
           <div className="w-full row-start-1 row-end-2 text-center text-3xl">
             <p>Add to Hall of Shame</p>

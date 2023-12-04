@@ -1,11 +1,11 @@
-'use client';
-import { useRouter } from 'next/navigation'
+"use client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { signIn } from 'next-auth/react'
+import { signIn } from "next-auth/react";
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const [loginUsername, setLoginUsername] = useState<string | undefined>("");
   const session = useSession();
   const [loginPassword, setLoginPassword] = useState<string | undefined>("");
@@ -18,21 +18,25 @@ export default function Login() {
 
   /**
    * Handlers for submission
-   * 
+   *
    */
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
   const handleSubmit = async () => {
-
-    const res = await signIn('credentials', {
+    const res = await signIn("credentials", {
       username: loginUsername,
       password: loginPassword,
-      redirect: false
-    })
-
-    if(res?.status == 200) {
-      const personId = session.data?.user.name 
-      router.push(`/users/${personId}`)
+      redirect: false,
+    });
+    if (res?.status == 200) {
+      const personId = session.data?.user.name;
+      if (personId !== undefined) {
+        console.log("sdflksjdfm,", personId)
+        router.push(`/users/${personId}`);
+      }
     }
-  }
+  };
 
   const submit = async (method: string) => {
     if (method == "create_login") {
@@ -53,9 +57,9 @@ export default function Login() {
         },
       });
       await response.json();
-    } 
-    
-    window.location.reload()
+    }
+
+    window.location.reload();
   };
 
   return (

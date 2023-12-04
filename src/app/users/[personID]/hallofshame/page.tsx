@@ -75,7 +75,7 @@ export const OverduePage = ({ params }: pageProps) => {
       <div className="mt-12 h-12 w-full text-3xl text-gray-700 text-center">
         <p>Hall of Shame</p>
       </div>
-      <div className="flex justify-center w-screen h-fit ">
+      <div className="flex justify-center bg-zinc-100 w-screen h-fit ">
         <div className="my-12 mx-20 bg-black h-1/4 w-3/5">
           <div>
             <div className="relative overflow-x-auto">

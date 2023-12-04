@@ -89,7 +89,7 @@ export const UserPage = ({ params }: pageProps) => {
         username={personInfo.username as string}
         personId={params.personID as string}
       />
-      <div className="flex justify-center w-screen h-fit ">
+      <div className="flex justify-center bg-zinc-100 w-screen h-fit ">
         <div className="rounded transition duration-150 ease-out hover:scale-105 bg-purple-500 my-20 h-12 w-24 text-white">
           <button className="h-12 w-24" onClick={() => {setSort(!sort)}}>
             Sort By Due Date

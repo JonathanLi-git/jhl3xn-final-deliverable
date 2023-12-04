@@ -62,7 +62,7 @@ export const AllPage = ({ params }: pageProps) => {
   return personInfo ? (
     <div className="bg-zinc-100 h-screen">
       <Navbar username={personInfo.username as string} personId={params.personID as string} />
-      <div className="flex justify-center w-screen h-fit ">
+      <div className="flex justify-center w-screen bg-zinc-100 h-fit ">
         <div className="my-20 mx-20 bg-black h-1/4 w-3/5">
           <div>
             <div className="relative overflow-x-auto">
