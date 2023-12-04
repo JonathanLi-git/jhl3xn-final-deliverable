@@ -30,7 +30,10 @@ export default function Login() {
 
     if (res?.status == 200) {
       const personId = session.data?.user.name;
-      if (personId !== undefined) router.push(`/users/${personId}`);
+      if (personId !== undefined) {
+        console.log("sldkfjsdlkf", personId);
+        router.push(`/users/${personId}`);
+      }
     }
   }
 
